@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.k4th77t.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 const prot = process.env.PORT || 5000;
 
@@ -41,6 +41,12 @@ const client = new MongoClient(uri, {
         app.get('/queryes',async(req,res)=>{
           const data=req.body
           const result=await queriesCollection.find().toArray()
+          res.send(result)
+        })
+        app.get('/queryes/:id',async(req,res)=>{
+          const id=req.params.id
+          const query={_id: new ObjectId(id)}
+          const result=await queriesCollection.findOne(query)
           res.send(result)
         })
 
