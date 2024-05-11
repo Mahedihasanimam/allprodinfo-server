@@ -38,6 +38,11 @@ const client = new MongoClient(uri, {
             const result=await queriesCollection.insertOne(data)
             res.send(result)
         })
+        app.get('/queryes',async(req,res)=>{
+          const data=req.body
+          const result=await queriesCollection.find().toArray()
+          res.send(result)
+        })
 
 
 
