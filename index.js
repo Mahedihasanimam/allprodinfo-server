@@ -93,6 +93,13 @@ const client = new MongoClient(uri, {
         const result=await recomendationCollection.find(query).toArray()
         res.send(result)
       })
+       // get my all recomendation
+       app.get('/recomendation/:email',async(req,res)=>{
+        const email=req.params.email
+        const query={userEmail: email}
+        const result=await recomendationCollection.find(query).toArray()
+        res.send(result)
+      })
 
       // Send a ping to confirm a successful connection
       await client.db("admin").command({ ping: 1 });
