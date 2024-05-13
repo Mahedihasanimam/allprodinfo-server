@@ -35,7 +35,7 @@ const client = new MongoClient(uri, {
         // post added query 
         app.post('/addqueries',async(req,res)=>{
             const data=req.body 
-            const result=await queriesCollection.insertOne(data).toArray()
+            const result=await queriesCollection.insertOne(data)
             res.send(result)
         })
         // add/ recomendation in recomendation collection 
@@ -58,6 +58,32 @@ const client = new MongoClient(uri, {
           const id=req.params.id
           const query={_id: new ObjectId(id)}
           const result=await queriesCollection.findOne(query)
+          res.send(result)
+        })
+        app.delete('/queryes/:id',async(req,res)=>{
+          const id=req.params.id
+          const query={_id: new ObjectId(id)}
+          const result=await queriesCollection.deleteOne(query)
+          res.send(result)
+        })
+
+        // update query 
+        app.patch('/update/:id',async(req,res)=>{
+          const alldata=req.body
+          console.log(alldata)
+          const id=req.params.id
+          const filter={_id:new ObjectId(id)}
+          const options = { upsert: true };
+          const updateDoc = {
+            $set: {
+              ProductName:alldata.ProductName ,
+              ProductBrand:alldata.ProductBrand, 
+              productPhoto:alldata.productPhoto ,
+              queryTItle:alldata.queryTItle ,
+              details:alldata.details,
+            },
+          };
+          const result=await queriesCollection.updateOne(filter,updateDoc,options)
           res.send(result)
         })
        // get recomendation by queryid 
