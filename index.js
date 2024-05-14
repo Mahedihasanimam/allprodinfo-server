@@ -107,6 +107,20 @@ async function run() {
       const result = await queriesCollection.findOne(query);
       res.send(result);
     });
+    
+    app.get('/myqueryes/:email',verifyToken,async(req,res)=>{
+      const tokenEmail=req.user?.email
+      const email = req.params.email;
+    if(tokenEmail !== email){
+      return res.status(403).send('forbidden access')
+    }
+      const query={email:email}
+      const result=await queriesCollection.find(query).toArray()
+      res.send(result)
+    })
+
+
+
     app.delete("/queryes/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -152,9 +166,12 @@ async function run() {
       res.send(result);
     });
     // get my all recomendation
-    app.get("/recomendation/:email", async (req, res) => {
-      // console.log('owner info',req.user.email);
+    app.get("/recomendation/:email",verifyToken, async (req, res) => {
+      const tokenEmail=req.user?.email
       const email = req.params.email;
+    if(tokenEmail !== email){
+      return res.status(403).send('forbidden access')
+    }
       const query = { userEmail: email };
       const result = await recomendationCollection.find(query).toArray();
       res.send(result);
