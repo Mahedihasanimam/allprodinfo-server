@@ -96,26 +96,31 @@ async function run() {
     // get all queryes
     app.get("/queryes", async (req, res) => {
       const data = req.body;
-      const result = await queriesCollection.find().toArray();
+ 
+      const result = (await queriesCollection.find().sort({currentDate: -1 }).toArray())
       res.send(result);
     });
 
     // get spesipic queryes by id
     app.get("/queryes/:id", async (req, res) => {
       const id = req.params.id;
+     
       const query = { _id: new ObjectId(id) };
       const result = await queriesCollection.findOne(query);
       res.send(result);
     });
     
     app.get('/myqueryes/:email',verifyToken,async(req,res)=>{
+      const options = {
+        sort: { currentDate: -1 },
+      };
       const tokenEmail=req.user?.email
       const email = req.params.email;
     if(tokenEmail !== email){
       return res.status(403).send('forbidden access')
     }
       const query={email:email}
-      const result=await queriesCollection.find(query).toArray()
+      const result=await queriesCollection.find(query,options).toArray()
       res.send(result)
     })
 
@@ -129,9 +134,12 @@ async function run() {
     });
 
     app.delete("/recomendation/:id", async (req, res) => {
+      const options = {
+        sort: { CurrentTimeStamp: -1 },
+      };
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await recomendationCollection.deleteOne(query);
+      const result = await recomendationCollection.deleteOne(query,options);
       res.send(result);
     });
 
@@ -167,24 +175,26 @@ async function run() {
     });
     // get my all recomendation
     app.get("/recomendation/:email",verifyToken, async (req, res) => {
+    
       const tokenEmail=req.user?.email
       const email = req.params.email;
     if(tokenEmail !== email){
       return res.status(403).send('forbidden access')
     }
       const query = { userEmail: email };
-      const result = await recomendationCollection.find(query).toArray();
+      const result = await recomendationCollection.find(query).sort({ currentTime:-1 }).toArray();
       res.send(result);
     });
     // get all recomendtaion
     app.get("/recomendation",logger,verifyToken, async (req, res) => {
+      
       console.log('owner info',req.user.email)
       let query={}
       if(req?.query?.email){
         query={email:req.query.email}
       }
       const data = req.data;
-      const result = await recomendationCollection.find().toArray();
+      const result = await recomendationCollection.find().sort({ currentTime:-1 }).toArray();
       res.send(result);
     });
     // Send a ping to confirm a successful connection
